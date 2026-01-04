@@ -9,9 +9,9 @@ import time
 st.set_page_config(page_title="Laundry Cloud ERP", layout="wide")
 
 def get_gsheet_client():
-scope = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
 ]
     creds = Credentials.from_service_account_info(creds_info, scopes=scope)
     client = gspread.authorize(creds)
