@@ -1,22 +1,27 @@
 import streamlit as st
 import pandas as pd
 import gspread
-from google.oauth2.service_account import Credentials
-from datetime import datetime
-import time
+from google.oauth2.service_account import Credentials # 這一行就是之前缺少的！
 
-# --- CONFIGURATION & DATABASE CONNECTION ---
-st.set_page_config(page_title="Laundry Cloud ERP", layout="wide")
-
+# --- 連接 Google Sheets 的設定 ---
 def get_gsheet_client():
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"
-]
+    ]
+    
+    # 讀取 Secrets
+    creds_info = st.secrets["connections_gsheets"]
+    
+    # 建立憑證
     creds = Credentials.from_service_account_info(creds_info, scopes=scope)
+    
+    # 授權 gspread
     client = gspread.authorize(creds)
-    # Replace with your actual Sheet Name
-    return client.open("Laundry_Management_DB")
+    return client
+
+# --- 初始化 (這行通常在下面，確保這裡有寫對) ---
+client = get_gsheet_client()
 
 client = get_gsheet_client()
 
