@@ -25,9 +25,28 @@ client = get_gsheet_client()
 
 client = get_gsheet_client()
 
+# --- Helper Function: 讀取 Google Sheet 資料 (修正版) ---
 def get_sheet_data(sheet_name):
-    sheet = client.worksheet(sheet_name)
-    return pd.DataFrame(sheet.get_all_records()), sheet
+    try:
+        # 1. 關鍵修正：先打開試算表檔案
+        # 注意：这里的名字必须跟您的 Google 試算表檔名一模一樣
+        sh = client.open("Laundry_Management_DB")
+        
+        # 2. 嘗試讀取指定的分頁 (例如 "Attendance")
+        try:
+            worksheet = sh.worksheet(sheet_name)
+        except gspread.WorksheetNotFound:
+            # 如果找不到分頁，就自動建立一個新的
+            worksheet = sh.add_worksheet(title=sheet_name, rows="1000", cols="20")
+            
+        # 3. 讀取資料
+        data = worksheet.get_all_records()
+        df = pd.DataFrame(data)
+        return df, worksheet
+
+    except Exception as e:
+        st.error(f"讀取錯誤：請確認 Google 試算表檔名是否為 'Laundry_Management_DB'。詳細錯誤: {e}")
+        return pd.DataFrame(), None
 
 # --- INITIALIZE SESSION STATE ---
 if 'user' not in st.session_state:
